@@ -15,7 +15,8 @@ export default function SOPResult({ content, onReset }: SOPResultProps) {
       await navigator.clipboard.writeText(content);
       setCopySuccess('Copied!');
       setTimeout(() => setCopySuccess(''), 2000);
-    } catch (err) {
+    } catch {
+      // No parameter needed since we're not using it
       setCopySuccess('Failed to copy');
     }
   };

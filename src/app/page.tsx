@@ -4,24 +4,31 @@ import { useState } from 'react';
 import SOPForm from '@/components/SOPForm';
 import SOPResult from '@/components/SOPResult';
 
+// Define proper types
+interface FormData {
+  title: string;
+  department: string;
+  description: string;
+}
+
 export default function Home() {
   const [generatedSOP, setGeneratedSOP] = useState<string | null>(null);
-  const [isGenerating, setIsGenerating] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false); // We'll use this now
   const [error, setError] = useState<string | null>(null);
 
-  const generateSOP = async (formData: any) => {
+  const generateSOP = async (formData: FormData) => {
     setError(null);
     setIsGenerating(true);
     
     try {
       const prompt = `
-        Create a detailed Standard Operating Procedure (SOP) for an accounting firm.
+        Create a detailed Standard Operating Procedure (SOP) document for an accounting firm.
         
         Title: ${formData.title}
         Department: ${formData.department}
         Description: ${formData.description}
         
-        Please format the SOP with the following sections:
+        Format the SOP with these numbered sections:
         1. Purpose
         2. Scope
         3. Responsibilities
@@ -29,7 +36,16 @@ export default function Home() {
         5. References/Related Documents
         6. Revision History
         
-        Make it professional, clear, and specific to accounting firms.
+        CRITICAL FORMATTING REQUIREMENTS:
+        - DO NOT USE ANY MARKDOWN FORMATTING SYMBOLS including asterisks (*), hash symbols (#), underscores (_), or hyphens for bullet points
+        - DO NOT include any "---" horizontal rules or dividers
+        - Format all section titles in PLAIN TEXT without any special formatting (Example: "1. Purpose" not "### **1. Purpose**")
+        - All emphasis must be done through CAPITALIZATION or spacing, not through formatting symbols
+        - For bullet points, use simple dashes or numbers followed by periods (1., 2., etc.)
+        - For the Revision History, use simple spacing (not markdown table formatting with pipes |)
+        - Return ONLY the plain text SOP without any additional commentary
+        
+        The final result should be COMPLETELY FREE of markdown syntax and should be formatted as a plain text document that could be pasted directly into a word processor without any special formatting.
       `;
       
       const response = await fetch('/api/generate-sop', {
@@ -46,8 +62,8 @@ export default function Home() {
       
       const data = await response.json();
       setGeneratedSOP(data.result);
-    } catch (err) {
-      console.error('Error generating SOP:', err);
+    } catch (error) {
+      console.error('Error generating SOP:', error);
       setError('An error occurred while generating the SOP. Please try again.');
     } finally {
       setIsGenerating(false);
@@ -82,6 +98,13 @@ export default function Home() {
             <SOPForm onSubmit={generateSOP} />
           )}
         </div>
+        
+        {/* Now we use isGenerating state to show a loading indicator */}
+        {isGenerating && (
+          <div className="text-center mt-4">
+            <p className="text-[#8a8f98]">Generating your SOP...</p>
+          </div>
+        )}
       </div>
     </div>
   );
