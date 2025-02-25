@@ -22,30 +22,32 @@ export default function Home() {
     
     try {
       const prompt = `
-        Create a detailed Standard Operating Procedure (SOP) document for an accounting firm.
+        As a Fractional COO and Business Process Management expert for an accounting firm, create a detailed Standard Operating Procedure (SOP) document in English only.
         
         Title: ${formData.title}
         Department: ${formData.department}
         Description: ${formData.description}
         
-        Format the SOP with these numbered sections:
-        1. Purpose
-        2. Scope
-        3. Responsibilities
-        4. Procedure (detailed step-by-step instructions)
-        5. References/Related Documents
-        6. Revision History
+        Please create a comprehensive SOP with these sections in plain text format:
         
-        CRITICAL FORMATTING REQUIREMENTS:
-        - DO NOT USE ANY MARKDOWN FORMATTING SYMBOLS including asterisks (*), hash symbols (#), underscores (_), or hyphens for bullet points
-        - DO NOT include any "---" horizontal rules or dividers
-        - Format all section titles in PLAIN TEXT without any special formatting (Example: "1. Purpose" not "### **1. Purpose**")
-        - All emphasis must be done through CAPITALIZATION or spacing, not through formatting symbols
-        - For bullet points, use simple dashes or numbers followed by periods (1., 2., etc.)
-        - For the Revision History, use simple spacing (not markdown table formatting with pipes |)
-        - Return ONLY the plain text SOP without any additional commentary
+        1. Objectives & Success Metrics - Clearly state what this procedure aims to accomplish and how success will be measured
+        2. Purpose - Explain why this SOP is necessary for the accounting firm
+        3. Roles - Define who is responsible for executing this SOP and who needs to be informed
+        4. Resources - List all tools, access, and prerequisites needed
+        5. Definition of Done - Provide a clear checklist for task completion
+        6. Step-by-Step Overview - Detailed instructions in sequential order
+        7. Estimated Time - How long this procedure should take
         
-        The final result should be COMPLETELY FREE of markdown syntax and should be formatted as a plain text document that could be pasted directly into a word processor without any special formatting.
+        IMPORTANT FORMATTING INSTRUCTIONS:
+        - Use ONLY plain text format - NO markdown formatting (no asterisks, hash symbols, underscores)
+        - Use simple numbering for steps (1., 2., etc.) and clear section headers
+        - Use plain text capitalization for emphasis, not special characters
+        - Write in professional, clear language specific to accounting firms
+        - Include ENGLISH ONLY text - do not include any other languages
+        - For each step, be specific and include potential points of confusion
+        - Keep formatting consistent throughout the document
+        
+        The final SOP should be accounting-specific, professionally formatted as plain text, and ready for implementation at an accounting firm.
       `;
       
       const response = await fetch('/api/generate-sop', {
