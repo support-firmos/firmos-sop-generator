@@ -65,7 +65,6 @@ export default function Home() {
       
       // Check if response is a stream
       if (response.headers.get('Content-Type')?.includes('text/event-stream')) {
-        // Handle streaming response
         const reader = response.body?.getReader();
         const decoder = new TextDecoder();
         
@@ -77,30 +76,29 @@ export default function Home() {
             if (done) break;
             
             const chunk = decoder.decode(value);
+            const lines = chunk.split('\n');
             
-            try {
-              // Check if it's a JSON string (for OpenAI stream format)
-              if (chunk.startsWith('data: ') && !chunk.includes('data: [DONE]')) {
-                const jsonStr = chunk.replace('data: ', '');
-                const jsonData = JSON.parse(jsonStr);
-                if (jsonData.choices && jsonData.choices[0]?.delta?.content) {
-                  const content = jsonData.choices[0].delta.content;
-                  fullText += content;
-                  setGeneratedSOP(fullText);
+            for (const line of lines) {
+              if (line.startsWith('data: ')) {
+                if (line.includes('data: [DONE]')) {
+                  // End of stream
+                  continue;
                 }
-              } else if (chunk.includes('data: [DONE]')) {
-                // End of stream
-                break;
-              } else {
-                // Plain text chunk
-                fullText += chunk;
-                setGeneratedSOP(fullText);
+                
+                try {
+                  const jsonStr = line.replace('data: ', '');
+                  const jsonData = JSON.parse(jsonStr);
+                  
+                  if (jsonData.choices && jsonData.choices[0]?.delta?.content) {
+                    const content = jsonData.choices[0].delta.content;
+                    fullText += content;
+                    setGeneratedSOP(fullText);
+                  }
+                } catch {
+                  // Not valid JSON or doesn't have the expected structure
+                  // Just continue to the next line
+                }
               }
-            } catch {
-              // If it's not valid JSON, treat as plain text
-              // No parameter in catch block at all
-              fullText += chunk;
-              setGeneratedSOP(fullText);
             }
           }
         }
