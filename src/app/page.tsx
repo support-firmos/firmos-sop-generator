@@ -1,100 +1,96 @@
-import Image from "next/image";
+'use client';
+
+import { useState } from 'react';
+import Header from '@/components/Header';
+import SOPForm from '@/components/SOPForm';
+import SOPResult from '@/components/SOPResult';
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const [generatedSOP, setGeneratedSOP] = useState<string | null>(null);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  const generateSOP = async (formData: any) => {
+    setError(null);
+    setIsGenerating(true);
+    
+    try {
+      const prompt = `
+        Create a detailed Standard Operating Procedure (SOP) for an accounting firm.
+        
+        Title: ${formData.title}
+        Department: ${formData.department}
+        Description: ${formData.description}
+        
+        Please format the SOP with the following sections:
+        1. Purpose
+        2. Scope
+        3. Responsibilities
+        4. Procedure (detailed step-by-step instructions)
+        5. References/Related Documents
+        6. Revision History
+        
+        Make it professional, clear, and specific to accounting firms.
+      `;
+      
+      const response = await fetch('/api/generate-sop', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ prompt }),
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to generate SOP');
+      }
+      
+      const data = await response.json();
+      setGeneratedSOP(data.result);
+    } catch (err) {
+      console.error('Error generating SOP:', err);
+      setError('An error occurred while generating the SOP. Please try again.');
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  const resetGenerator = () => {
+    setGeneratedSOP(null);
+    setError(null);
+  };
+
+  return (
+    <div className="min-h-screen flex flex-col">
+      <Header />
+      
+      <main className="flex-grow container mx-auto py-8 px-4">
+        <div className="max-w-3xl mx-auto">
+          <div className="mb-8 text-center">
+            <h1 className="text-3xl font-bold mb-2">SOP Generator</h1>
+            <p className="text-gray-600">
+              Create professional Standard Operating Procedures for your accounting firm in seconds
+            </p>
+          </div>
+          
+          {error && (
+            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-6">
+              {error}
+            </div>
+          )}
+          
+          {generatedSOP ? (
+            <SOPResult content={generatedSOP} onReset={resetGenerator} />
+          ) : (
+            <SOPForm onSubmit={generateSOP} />
+          )}
         </div>
       </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
+      
+      <footer className="bg-vampireBlack text-cultured py-4">
+        <div className="container mx-auto px-4 text-center">
+          <p>&copy; {new Date().getFullYear()} FirmOS. All rights reserved.</p>
+        </div>
       </footer>
     </div>
   );
