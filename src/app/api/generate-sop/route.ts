@@ -23,7 +23,7 @@ export async function POST(request: Request) {
         model: 'deepseek/deepseek-r1-distill-qwen-32b',
         messages: [{ role: 'user', content: prompt }],
         stream: true, // Enable streaming
-        max_tokens: 1500,
+        max_tokens: 3000,
         temperature: 0.7,
       }),
     });
