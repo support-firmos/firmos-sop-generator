@@ -16,7 +16,7 @@ export async function POST(request: Request) {
         'X-Title': 'FirmOS SOP Generator',
       },
       body: JSON.stringify({
-        model: 'deepseek/deepseek-r1-distill-qwen-32b',
+        model: 'google/gemini-2.0-flash-001',
         messages: [{ role: 'user', content: prompt }],
       }),
     });
