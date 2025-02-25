@@ -7,8 +7,8 @@ import Button from './Button';
 
 const formSchema = z.object({
   title: z.string().min(1, 'SOP title is required'),
-  description: z.string().min(10, 'Please provide more details (min 10 characters)'),
   department: z.string().min(1, 'Department is required'),
+  description: z.string().min(10, 'Please provide more details (min 10 characters)'),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -36,28 +36,22 @@ export default function SOPForm({ onSubmit }: { onSubmit: (values: FormValues) =
   return (
     <form onSubmit={handleSubmit(submitHandler)} className="space-y-6">
       <div>
-        <label htmlFor="title" className="block text-vampireBlack font-medium mb-1">
-          SOP Title
-        </label>
         <input
           id="title"
           type="text"
-          className="w-full px-4 py-2 border border-argent rounded focus:outline-none focus:ring-2 focus:ring-vampireBlack"
+          className="input-field text-lg"
           placeholder="e.g., Client Onboarding Process"
           {...register('title')}
         />
         {errors.title && (
-          <p className="mt-1 text-red-600 text-sm">{errors.title.message}</p>
+          <p className="mt-2 text-red-400 text-sm">{errors.title.message}</p>
         )}
       </div>
       
       <div>
-        <label htmlFor="department" className="block text-vampireBlack font-medium mb-1">
-          Department
-        </label>
         <select
           id="department"
-          className="w-full px-4 py-2 border border-argent rounded focus:outline-none focus:ring-2 focus:ring-vampireBlack"
+          className="input-field"
           {...register('department')}
         >
           <option value="">Select a department</option>
@@ -69,29 +63,33 @@ export default function SOPForm({ onSubmit }: { onSubmit: (values: FormValues) =
           <option value="Administration">Administration</option>
         </select>
         {errors.department && (
-          <p className="mt-1 text-red-600 text-sm">{errors.department.message}</p>
+          <p className="mt-2 text-red-400 text-sm">{errors.department.message}</p>
         )}
       </div>
       
       <div>
-        <label htmlFor="description" className="block text-vampireBlack font-medium mb-1">
-          Process Description
-        </label>
         <textarea
           id="description"
-          rows={5}
-          className="w-full px-4 py-2 border border-argent rounded focus:outline-none focus:ring-2 focus:ring-vampireBlack"
+          rows={6}
+          className="input-field"
           placeholder="Describe the process in detail. What are the steps involved? Who is responsible for each step?"
           {...register('description')}
         />
         {errors.description && (
-          <p className="mt-1 text-red-600 text-sm">{errors.description.message}</p>
+          <p className="mt-2 text-red-400 text-sm">{errors.description.message}</p>
         )}
       </div>
       
-      <Button type="submit" isLoading={isSubmitting} size="lg" className="w-full">
-        Generate SOP Document
-      </Button>
+      <div className="pt-4">
+        <Button 
+          type="submit" 
+          isLoading={isSubmitting} 
+          size="lg" 
+          className="w-full"
+        >
+          Generate SOP Document
+        </Button>
+      </div>
     </form>
   );
 }

@@ -4,22 +4,18 @@ import Link from 'next/link';
 
 export default function Header() {
   return (
-    <header className="bg-vampireBlack text-cultured p-4">
-      <div className="container mx-auto flex justify-between items-center">
-        <Link href="/" className="flex items-center space-x-2">
-          <div className="relative w-10 h-10">
-            <Image 
-              src="/logo.svg" 
-              alt="FirmOS Logo" 
-              fill 
-              className="object-contain"
-            />
-          </div>
-          <span className="font-inter font-bold text-xl">FirmOS</span>
+    <header className="bg-[#08090a] py-5">
+      <div className="container mx-auto flex justify-center">
+        {/* Just the logo, enlarged */}
+        <Link href="/">
+          <Image 
+            src="https://storage.googleapis.com/firmos-pics/FirmOS%20Logo%20-%20White.png" 
+            alt="FirmOS Logo" 
+            width={150}  // Increased from 40 to 80
+            height={150} // Increased from 40 to 80
+            className="object-contain"
+          />
         </Link>
-        <div className="text-sm">
-          <span className="font-medium">SOP Generator</span>
-        </div>
       </div>
     </header>
   );

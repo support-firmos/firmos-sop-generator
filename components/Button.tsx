@@ -20,14 +20,14 @@ export default function Button({
   return (
     <button
       className={classNames(
-        'font-inter font-medium rounded transition-colors',
+        'font-inter font-medium rounded-lg transition-all duration-300 shadow-sm hover:shadow-md',
         {
-          'bg-vampireBlack text-cultured hover:bg-gray-800': variant === 'primary',
-          'bg-cultured text-vampireBlack border border-vampireBlack hover:bg-gray-100': variant === 'secondary',
-          'bg-transparent text-vampireBlack border border-vampireBlack hover:bg-gray-100': variant === 'outline',
-          'py-1 px-3 text-sm': size === 'sm',
-          'py-2 px-4 text-base': size === 'md',
-          'py-3 px-6 text-lg': size === 'lg',
+          'bg-gradient-card text-cultured hover:bg-gradient-hover': variant === 'primary',
+          'bg-surface-1 text-cultured border border-argent/20 hover:bg-surface-2': variant === 'secondary',
+          'bg-transparent text-cultured border border-argent/40 hover:bg-surface-1': variant === 'outline',
+          'py-2 px-3 text-sm': size === 'sm',
+          'py-3 px-4 text-base': size === 'md',
+          'py-4 px-6 text-lg': size === 'lg',
           'opacity-70 cursor-not-allowed': isLoading || props.disabled,
         },
         className

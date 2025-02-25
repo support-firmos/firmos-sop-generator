@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import Header from '@/components/Header';
 import SOPForm from '@/components/SOPForm';
 import SOPResult from '@/components/SOPResult';
 
@@ -61,37 +60,29 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <Header />
-      
-      <main className="flex-grow container mx-auto py-8 px-4">
-        <div className="max-w-3xl mx-auto">
-          <div className="mb-8 text-center">
-            <h1 className="text-3xl font-bold mb-2">SOP Generator</h1>
-            <p className="text-gray-600">
-              Create professional Standard Operating Procedures for your accounting firm in seconds
-            </p>
+    <div className="py-10 px-4 container mx-auto main-content">
+      <div className="max-w-3xl mx-auto">
+        <div className="text-center mb-8">
+          <h1 className="text-2xl sm:text-3xl font-bold mb-2 text-[#f7f8f8]">SOP Generator</h1>
+          <p className="text-[#8a8f98]">
+            Create professional Standard Operating Procedures for your accounting firm in seconds
+          </p>
+        </div>
+        
+        {error && (
+          <div className="bg-red-900/30 border border-red-700/30 text-red-300 px-4 py-3 rounded-xl mb-6">
+            {error}
           </div>
-          
-          {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-6">
-              {error}
-            </div>
-          )}
-          
+        )}
+        
+        <div className="card">
           {generatedSOP ? (
             <SOPResult content={generatedSOP} onReset={resetGenerator} />
           ) : (
             <SOPForm onSubmit={generateSOP} />
           )}
         </div>
-      </main>
-      
-      <footer className="bg-vampireBlack text-cultured py-4">
-        <div className="container mx-auto px-4 text-center">
-          <p>&copy; {new Date().getFullYear()} FirmOS. All rights reserved.</p>
-        </div>
-      </footer>
+      </div>
     </div>
   );
 }

@@ -33,7 +33,7 @@ export default function SOPResult({ content, onReset }: SOPResultProps) {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h2 className="text-xl font-bold">Generated SOP</h2>
+        <h2 className="text-xl font-bold text-cultured">Generated SOP</h2>
         <div className="flex space-x-2">
           <Button variant="outline" size="sm" onClick={handleCopy}>
             {copySuccess || 'Copy'}
@@ -47,8 +47,8 @@ export default function SOPResult({ content, onReset }: SOPResultProps) {
         </div>
       </div>
       
-      <div className="p-4 bg-white border border-argent rounded-md">
-        <div className="prose max-w-none whitespace-pre-wrap">
+      <div className="p-6 bg-surface-1 border border-argent/20 rounded-xl shadow-md">
+        <div className="prose prose-invert max-w-none whitespace-pre-wrap">
           {content}
         </div>
       </div>
