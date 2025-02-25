@@ -1,7 +1,11 @@
-// app/api/generate-sop/route.ts
+// src/app/api/generate-sop/route.ts
 import { NextResponse } from 'next/server';
 
-export const runtime = 'edge'; // This helps with the timeout issue
+// Set maximum duration to 60 seconds
+export const maxDuration = 60;
+
+// Use Edge runtime for better performance with long-running requests
+export const runtime = 'edge';
 
 export async function POST(request: Request) {
   try {
@@ -12,22 +16,26 @@ export async function POST(request: Request) {
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
-        'HTTP-Referer': process.env.SITE_URL || 'https://firmos-sop-generator.vercel.app',
+        'HTTP-Referer': process.env.NEXT_PUBLIC_SITE_URL || 'https://firmos-sop-generator.vercel.app',
         'X-Title': 'FirmOS SOP Generator',
       },
       body: JSON.stringify({
-        model: 'google/gemini-2.0-flash-001',
+        model: 'deepseek/deepseek-r1-distill-qwen-32b',
         messages: [{ role: 'user', content: prompt }],
+        stream: true, // Enable streaming
+        max_tokens: 1500,
+        temperature: 0.7,
       }),
     });
     
-    if (!response.ok) {
-      const errorData = await response.json();
-      return NextResponse.json({ error: errorData }, { status: response.status });
-    }
-    
-    const data = await response.json();
-    return NextResponse.json({ result: data.choices[0].message.content });
+    // Return the stream response directly
+    return new Response(response.body, {
+      headers: {
+        'Content-Type': 'text/event-stream',
+        'Cache-Control': 'no-cache',
+        'Connection': 'keep-alive',
+      },
+    });
   } catch (error) {
     console.error('Error in SOP generation:', error);
     return NextResponse.json({ error: 'Failed to generate SOP' }, { status: 500 });
