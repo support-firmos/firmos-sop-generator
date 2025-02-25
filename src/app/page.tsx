@@ -13,12 +13,13 @@ interface FormData {
 
 export default function Home() {
   const [generatedSOP, setGeneratedSOP] = useState<string | null>(null);
-  const [isGenerating, setIsGenerating] = useState(false); // We'll use this now
+  const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const generateSOP = async (formData: FormData) => {
     setError(null);
     setIsGenerating(true);
+    setGeneratedSOP(''); // Initialize with empty string for streaming
     
     try {
       const prompt = `
@@ -59,11 +60,54 @@ export default function Home() {
       });
       
       if (!response.ok) {
-        throw new Error('Failed to generate SOP');
+        throw new Error(`Failed to generate SOP: ${response.status}`);
       }
       
-      const data = await response.json();
-      setGeneratedSOP(data.result);
+      // Check if response is a stream
+      if (response.headers.get('Content-Type')?.includes('text/event-stream')) {
+        // Handle streaming response
+        const reader = response.body?.getReader();
+        const decoder = new TextDecoder();
+        
+        if (reader) {
+          let fullText = '';
+          
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            
+            const chunk = decoder.decode(value);
+            
+            try {
+              // Check if it's a JSON string (for OpenAI stream format)
+              if (chunk.startsWith('data: ') && !chunk.includes('data: [DONE]')) {
+                const jsonStr = chunk.replace('data: ', '');
+                const jsonData = JSON.parse(jsonStr);
+                if (jsonData.choices && jsonData.choices[0]?.delta?.content) {
+                  const content = jsonData.choices[0].delta.content;
+                  fullText += content;
+                  setGeneratedSOP(fullText);
+                }
+              } else if (chunk.includes('data: [DONE]')) {
+                // End of stream
+                break;
+              } else {
+                // Plain text chunk
+                fullText += chunk;
+                setGeneratedSOP(fullText);
+              }
+            } catch (e) {
+              // If it's not valid JSON, treat as plain text
+              fullText += chunk;
+              setGeneratedSOP(fullText);
+            }
+          }
+        }
+      } else {
+        // Handle regular JSON response
+        const data = await response.json();
+        setGeneratedSOP(data.result);
+      }
     } catch (error) {
       console.error('Error generating SOP:', error);
       setError('An error occurred while generating the SOP. Please try again.');
@@ -101,10 +145,11 @@ export default function Home() {
           )}
         </div>
         
-        {/* Now we use isGenerating state to show a loading indicator */}
         {isGenerating && (
           <div className="text-center mt-4">
-            <p className="text-[#8a8f98]">Generating your SOP...</p>
+            <p className="text-[#8a8f98]">
+              {generatedSOP ? 'Still generating your SOP...' : 'Generating your SOP...'}
+            </p>
           </div>
         )}
       </div>
