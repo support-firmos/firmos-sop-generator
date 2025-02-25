@@ -96,8 +96,9 @@ export default function Home() {
                 fullText += chunk;
                 setGeneratedSOP(fullText);
               }
-            } catch (e) {
+            } catch {
               // If it's not valid JSON, treat as plain text
+              // No parameter in catch block at all
               fullText += chunk;
               setGeneratedSOP(fullText);
             }
