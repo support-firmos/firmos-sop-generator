@@ -20,7 +20,7 @@ export async function POST(request: Request) {
         'X-Title': 'FirmOS SOP Generator',
       },
       body: JSON.stringify({
-        model: 'mistralai/mistral-nemo',
+        model: 'deepseek/deepseek-r1-distill-qwen-32b',
         messages: [{ role: 'user', content: prompt }],
         stream: true, // Enable streaming
         max_tokens: 3000,
