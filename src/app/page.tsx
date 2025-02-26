@@ -29,6 +29,8 @@ export default function Home() {
         Department: ${formData.department}
         Description: ${formData.description}
         
+        Use the Title, Department, and Description to align the SOP. You may change it if necessary.
+
         Please create a comprehensive SOP with these sections in plain text format:
         
         1. Objectives & Success Metrics - Clearly state what this procedure aims to accomplish and how success will be measured
